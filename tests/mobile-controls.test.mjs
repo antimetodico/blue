@@ -1,80 +1,57 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import vm from 'node:vm';
 
-const controlScript = await readFile(new URL('../public/mobile-controls.js', import.meta.url), 'utf8');
 const html = await readFile(new URL('../public/index.html', import.meta.url), 'utf8');
-const windowStub = { navigator: {} };
-vm.runInNewContext(controlScript, { window: windowStub, navigator: windowStub.navigator });
-const controls = windowStub.MobileControls;
+const game = await readFile(new URL('../public/dungeon.js', import.meta.url), 'utf8');
 
-function button(control) {
-  const listeners = {};
-  return {
-    dataset: { control },
-    listeners,
-    addEventListener(type, listener) { (listeners[type] ??= []).push(listener); },
-    setPointerCapture() {},
-    fire(type, pointerId = 1) {
-      for (const listener of listeners[type] ?? []) {
-        listener({ pointerId, currentTarget: this, preventDefault() {} });
-      }
-    },
-  };
-}
-
-function rootWith(...buttons) {
-  return { querySelectorAll: () => buttons };
-}
-
-test('detects coarse pointers and touch-capable browsers, not ordinary desktop', () => {
-  assert.equal(controls.isTouchDevice({ matchMedia: () => ({ matches: true }) }, {}), true);
-  assert.equal(controls.isTouchDevice({ matchMedia: () => ({ matches: false }) }, { maxTouchPoints: 5 }), true);
-  assert.equal(controls.isTouchDevice({ matchMedia: () => ({ matches: false }) }, {}), false);
+test('loads the dungeon game and provides its main interface elements', () => {
+  assert.match(html, /<script src="dungeon\.js"><\/script>/);
+  assert.match(html, /id="game"/);
+  assert.match(html, /id="flash"/);
+  assert.match(html, /id="room-label"/);
+  assert.match(html, /id="open-button"/);
 });
 
-test('touch buttons press and release the matching game controls', () => {
-  const up = button('up');
-  const jump = button('jump');
-  const keys = {};
-  controls.bindTouchControls(rootWith(up, jump), keys);
-  up.fire('pointerdown', 7);
-  jump.fire('pointerdown', 8);
-  assert.equal(keys.w, true);
-  assert.equal(keys[' '], true);
-  up.fire('pointerup', 7);
-  jump.fire('pointerup', 8);
-  assert.equal(keys.w, false);
-  assert.equal(keys[' '], false);
+test('character shimmer is a camera-facing pixel texture', () => {
+  assert.match(game, /new THREE\.CanvasTexture\(characterCanvas\)/);
+  assert.match(game, /THREE\.NearestFilter/);
+  assert.match(game, /new THREE\.Sprite/);
+  assert.match(game, /depthTest: false/);
+  assert.match(game, /function refreshShimmer/);
+  assert.match(game, /function drawFlashPattern/);
 });
 
-test('cancelled touches release movement and allow simultaneous fingers', () => {
-  const up = button('up');
-  const jump = button('jump');
-  const keys = {};
-  controls.bindTouchControls(rootWith(up, jump), keys);
-  up.fire('pointerdown', 1);
-  up.fire('pointerdown', 2);
-  up.fire('pointerup', 1);
-  assert.equal(keys.w, true);
-  up.fire('pointercancel', 2);
-  assert.equal(keys.w, false);
-  jump.fire('pointerdown', 3);
-  jump.fire('lostpointercapture', 3);
-  assert.equal(keys[' '], false);
+test('movement and camera follow use smoothed real-time vectors', () => {
+  assert.match(game, /function getInput/);
+  assert.match(game, /velocity\.lerp\(desiredVelocity/);
+  assert.match(game, /dampAngle\(cameraYaw, player\.rotation\.y/);
+  assert.match(game, /camera\.position\.lerp/);
+  assert.match(game, /leftLeg\.rotation\.x/);
+  assert.match(game, /rightArm\.rotation\.x/);
 });
 
-test('mobile start prompt stays hidden on desktop and is enabled for touch devices', () => {
-  assert.match(html, /\.prompt\.mobile-prompt\{display:none\}/);
-  assert.match(html, /\.touch-device \.mobile-prompt\{display:block\}/);
+test('rooms are seeded and decorated with chests, chains, and moss', () => {
+  assert.match(game, /function seededRandom/);
+  assert.match(game, /function buildRoom/);
+  assert.match(game, /addChest\(roomRoot/);
+  assert.match(game, /addChain\(roomRoot/);
+  assert.match(game, /addMoss\(roomRoot/);
+  assert.match(game, /roomRoot\.rotation\.y = roomAngle/);
 });
 
-test('mobile layout provides touch instructions and four-way plus hop controls', () => {
-  assert.match(html, /id="mobile-controls"/);
-  assert.match(html, /id="mobile-hint"/);
-  for (const control of ['up', 'down', 'left', 'right', 'jump']) {
-    assert.match(html, new RegExp(`data-control="${control}"`));
-  }
-  assert.match(html, /touch-device/);
+test('door interaction opens the door before the full-screen transition', () => {
+  assert.match(game, /function openDoor/);
+  assert.match(game, /doorPivot\.rotation\.y = Math\.max/);
+  assert.match(game, /function beginTransition/);
+  assert.match(game, /buildRoom\(roomNumber \+ 1\)/);
+  assert.match(game, /flashCanvas\.style\.opacity/);
+});
+
+test('supports touch joystick, keyboard, and browser gamepads', () => {
+  assert.match(html, /id="stick-base"/);
+  assert.match(game, /stickBase\.addEventListener\('pointerdown'/);
+  assert.match(game, /event\.pointerId === stickPointer/);
+  assert.match(game, /arrowup/);
+  assert.match(game, /navigator\.getGamepads/);
 });

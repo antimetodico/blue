@@ -283,7 +283,7 @@
     for (let i = 0; i < count; i++) {
       const link = new THREE.Mesh(new THREE.TorusGeometry(0.075, 0.024, 4, 7), metal);
       link.position.y = -i * 0.24;
-      link.rotation.x = Math.PI / 2;
+      link.rotation.y = i % 2 ? 0.42 : -0.42;
       link.rotation.z = i % 2 ? 0.45 : -0.45;
       chain.add(link);
     }

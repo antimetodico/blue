@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-Open the local URL printed by Wrangler. Controls: **WASD / arrow keys** to move, **Space** to hop, **R** to restart after game over.
+Open the local URL printed by Wrangler. Desktop controls: **WASD / arrow keys** to move, **Space** to hop, **R** to restart after game over. Touch devices get an on-screen D-pad and **HOP** button instead; tap anywhere after game over to restart.
 
 ## Deploy to Cloudflare Workers
 

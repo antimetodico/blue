@@ -1,0 +1,14 @@
+{
+  "name": "blue",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A tiny low-poly PSX-style browser game",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "check": "wrangler deploy --dry-run"
+  },
+  "devDependencies": {
+    "wrangler": "4.158.0"
+  }
+}

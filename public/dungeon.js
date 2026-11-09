@@ -715,19 +715,21 @@
     const speed = velocity.length();
     const walkStrength = clamp(speed / 3.8, 0, 1);
     if (walkStrength > 0.015) {
-      walkPhase += dt * (4.0 + walkStrength * 5.2);
+      // Tie cadence to distance travelled so feet do not skate under a moving body.
+      walkPhase += dt * speed * (Math.PI * 2 / 1.65);
     }
 
     const cycle = walkPhase;
-    const swing = Math.sin(cycle) * 0.62 * walkStrength;
-    const recovery = Math.max(0, Math.sin(cycle + Math.PI * 0.5)) * walkStrength;
+    const swing = Math.sin(cycle) * 0.55 * walkStrength;
+    const leftKneeBend = Math.pow(Math.max(0, Math.sin(cycle + 0.3)), 1.35) * 0.72 * walkStrength;
+    const rightKneeBend = Math.pow(Math.max(0, Math.sin(cycle + Math.PI + 0.3)), 1.35) * 0.72 * walkStrength;
 
     leftLeg.hip.rotation.x = swing;
     rightLeg.hip.rotation.x = -swing;
-    leftLeg.knee.rotation.x = recovery * 0.55;
-    rightLeg.knee.rotation.x = Math.max(0, Math.sin(cycle + Math.PI * 1.5)) * walkStrength * 0.55;
-    leftLeg.foot.rotation.x = -leftLeg.knee.rotation.x * 0.65;
-    rightLeg.foot.rotation.x = -rightLeg.knee.rotation.x * 0.65;
+    leftLeg.knee.rotation.x = leftKneeBend;
+    rightLeg.knee.rotation.x = rightKneeBend;
+    leftLeg.foot.rotation.x = -leftKneeBend * 0.45 + swing * 0.16;
+    rightLeg.foot.rotation.x = -rightKneeBend * 0.45 - swing * 0.16;
 
     leftArm.shoulder.rotation.x = -swing * 0.62 - 0.04 * walkStrength;
     rightArm.shoulder.rotation.x = swing * 0.62 - 0.04 * walkStrength;

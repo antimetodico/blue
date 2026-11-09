@@ -1,32 +1,46 @@
-# SHARD//RUN
+# THE PALE ROOM
 
-A tiny low-poly, PSX-inspired browser game. Collect five memory shards while avoiding the watcher.
+A low-poly, third-person browser dungeon built with Three.js. Guide a small white figure through an endless sequence of quiet, procedurally varied rooms. Each room has a heavy door; approach it and press **E** (or tap **OPEN**) to move onward through a full-screen pixel-shimmer transition.
+
+## Features
+
+- White low-poly character with a camera-facing, animated pixel shimmer and bright aura.
+- Smooth directional walking animation driven by live movement input.
+- Third-person camera with eased follow and delayed heading.
+- Procedurally varied rooms with randomized orientation, stone details, chests, hanging chains, moss, rubble, and torchlight.
+- Animated doors and a bright shimmer transition between rooms.
+- Keyboard, touch joystick, and standard browser gamepad input.
 
 ## Run locally
 
-```sh
+\`\`\`sh
 npm install
 npm run dev
-```
+\`\`\`
 
-Open the local URL printed by Wrangler. Desktop controls: **WASD / arrow keys** to move, **Space** to hop, **R** to restart after game over. Touch devices get an on-screen D-pad and **HOP** button instead; tap anywhere after game over to restart.
+Open the local URL printed by Wrangler.
+
+**Desktop:** WASD or arrow keys to move; **E** to open a nearby door.  
+**Mobile:** use the on-screen joystick and tap **OPEN** near a door.  
+**Gamepad:** left stick to move; the primary button to open a nearby door.
 
 ## Deploy to Cloudflare Workers
 
-This is a static-assets Worker; the game is served from `public/` using `wrangler.jsonc`.
+The game is served as static assets from \`public/\` using \`wrangler.jsonc\`.
 
-```sh
+\`\`\`sh
 npm install
 npx wrangler login
 npm run deploy
-```
+\`\`\`
 
-`wrangler login` opens Cloudflare authorization in your browser. Deploying requires a Cloudflare account; this repository does not contain account credentials. For Git-based deploys, connect this repository to Workers Builds in the Cloudflare dashboard and use `npm run deploy` as the deploy command.
+\`wrangler login\` opens Cloudflare authorization in your browser. Deployment requires a Cloudflare account; this repository does not contain account credentials. For Git-based deploys, connect the repository to Workers Builds in the Cloudflare dashboard and use \`npm run deploy\` as the deploy command.
 
 ## Validation
 
-```sh
+\`\`\`sh
+npm test
 npm run check
-```
+\`\`\`
 
-This runs Wrangler's deploy dry-run without publishing the site.
+\`npm test\` runs the repository's Node.js smoke tests. \`npm run check\` runs Wrangler's deploy dry-run without publishing the site.

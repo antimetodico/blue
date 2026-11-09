@@ -47,7 +47,7 @@ test('movement reference is locked during a movement stroke to avoid camera feed
   assert.match(game, /const forward = new THREE\.Vector3\(\s*Math\.sin\(movementBasisYaw\)/);
   assert.match(game, /velocity\.lerp\(desiredVelocity/);
   assert.match(game, /player\.rotation\.y = dampAngle/);
-  assert.match(game, /walkPhase \+= dt/);
+  assert.match(game, /walkPhase \+= dt \* speed \* \(Math\.PI \* 2 \/ 1\.65\)/);
 });
 
 test('rooms retain procedural decorations and a door transition', () => {

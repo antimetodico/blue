@@ -1,104 +1,76 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>SHARD//RUN — a tiny PSX game</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#10131b">
+<title>THE PALE ROOM — a tiny dungeon</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-:root{--ink:#c5e8d9;--mint:#8df0ca;--pink:#ff7189;--gold:#ffd78b}
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#090f18;color:var(--ink);font-family:'Press Start 2P',monospace}
-#stage{position:fixed;inset:0;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 44%,#263b45 0%,#101a26 58%,#080d14 100%)}
-#game{width:min(100vw,177.78vh);height:min(100vh,56.25vw);image-rendering:pixelated;image-rendering:crisp-edges;display:block;box-shadow:0 0 80px #000b}
-#overlay{position:fixed;inset:0;pointer-events:none;text-shadow:2px 2px #10141c, -1px 0 #10141c,0 1px #10141c}
-.top{position:absolute;top:5%;left:5%;right:5%;display:flex;justify-content:space-between;align-items:flex-start;font-size:clamp(8px,1.15vw,13px);line-height:2}
-.brand{color:var(--mint);letter-spacing:1px}.stat{color:#ecf4dc}.stat b{color:var(--gold);font-weight:normal}
-#hint{position:absolute;left:50%;bottom:7%;transform:translateX(-50%);font-size:clamp(8px,1vw,11px);white-space:nowrap;color:#d2e5d7;text-align:center;line-height:2.2}
-.mobile-keys,#mobile-hint{display:none}.prompt.mobile-prompt{display:none}
-#mobile-hint{position:absolute;left:50%;bottom:calc(max(20px,env(safe-area-inset-bottom)) + 5px);transform:translateX(-50%);font-size:8px;white-space:nowrap;color:#d2e5d7}
-#mobile-controls{position:absolute;inset:0;display:none;align-items:flex-end;justify-content:space-between;padding:0 24px max(20px,env(safe-area-inset-bottom));pointer-events:none;z-index:5}
-#mobile-controls button{pointer-events:auto;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;font-family:inherit;color:var(--mint);background:#0d1722e8;border:2px solid #8df0caaa;box-shadow:4px 4px 0 #05080d;border-radius:10px}
-.dpad{display:grid;grid-template:repeat(3,52px)/repeat(3,52px);gap:4px;pointer-events:none}
-.dpad button{font-size:22px;line-height:1}
-#touch-up{grid-area:1/2}#touch-left{grid-area:2/1}#touch-down{grid-area:3/2}#touch-right{grid-area:2/3}
-.dpad-center{grid-area:2/2;border:2px solid #8df0ca55;background:#0d1722aa;border-radius:8px}
-#jump-button{width:86px;height:86px;border-radius:50%!important;border-color:#ffd78b!important;color:#ffd78b!important;font-size:11px;letter-spacing:1px}
-#mobile-controls button:active{background:#397c78;transform:translateY(2px)}
-.touch-device #hint,.touch-device .keys,.touch-device .desktop-prompt{display:none}
-.touch-device #mobile-controls{display:flex}
-.touch-device #mobile-hint,.touch-device .mobile-keys,.touch-device .mobile-prompt{display:block}
-#toast{position:absolute;top:21%;left:50%;transform:translateX(-50%);font-size:clamp(10px,1.4vw,16px);color:var(--gold);opacity:0;transition:opacity .25s;text-align:center;white-space:nowrap}
-#crosshair{position:absolute;left:50%;top:50%;width:8px;height:8px;border:1px solid #def9d799;transform:translate(-50%,-50%);opacity:.6}
-#start{pointer-events:auto;position:fixed;inset:0;background:#080d14d9;display:grid;place-items:center;text-align:center;padding:24px;transition:opacity .45s}
-.card{max-width:610px;padding:clamp(24px,5vw,54px);border:2px solid #8df0ca88;background:#0d1722eF;box-shadow:8px 8px 0 #05080d;color:#d7eadb}
-h1{font-size:clamp(20px,4vw,42px);line-height:1.5;color:var(--mint);margin:0 0 14px;letter-spacing:-2px} .kicker{font-size:9px;color:#ffd78b;letter-spacing:2px;margin-bottom:18px}
-.card p{font-size:clamp(9px,1.2vw,12px);line-height:2.4;color:#b4c9bd}.prompt{display:inline-block;color:#090f18;background:var(--mint);padding:14px 16px;margin-top:13px;font-size:10px;animation:blink 1s steps(2,start) infinite}
-@keyframes blink{to{visibility:hidden}}.keys{color:#90ad9f!important;font-size:9px!important}
-@media(max-width:600px){.top{top:3%;left:4%;right:4%}.card p{line-height:2}.brand{max-width:120px}}
-@media(max-height:460px) and (orientation:landscape){#mobile-controls{padding:0 18px max(12px,env(safe-area-inset-bottom))}.dpad{grid-template:repeat(3,42px)/repeat(3,42px)}#jump-button{width:72px;height:72px}}
+:root{color-scheme:dark;--white:#f5f7ff;--muted:#a9adbd;--line:#cbd4ef55;--panel:#111520eF}
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#10131b;color:var(--white);font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+body{overscroll-behavior:none;user-select:none;-webkit-user-select:none}
+#game{position:fixed;inset:0;width:100%;height:100%;display:block;outline:0}
+#flash{position:fixed;inset:0;width:100%;height:100%;object-fit:fill;opacity:0;pointer-events:none;z-index:20;image-rendering:pixelated}
+#hud{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;align-items:flex-start;padding:24px 28px;pointer-events:none;text-shadow:0 2px 8px #000}
+#logo{font-size:11px;letter-spacing:.24em;color:#fff;line-height:1.7;opacity:.88}
+#room-label{font-size:11px;letter-spacing:.18em;color:#e4e9ff;padding:9px 12px;border:1px solid var(--line);background:#10131b88}
+#subtitle{position:fixed;top:66px;left:28px;font-size:9px;letter-spacing:.15em;color:#9ca6c0;pointer-events:none}
+#open-hint{position:fixed;left:50%;bottom:28px;transform:translate(-50%,8px);z-index:6;padding:12px 16px;border:1px solid #e6ebff66;background:#111520dd;color:#f6f7ff;font-size:10px;letter-spacing:.12em;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap}
+#open-hint.visible{opacity:1;transform:translate(-50%,0)}
+#controls-note{position:fixed;right:28px;bottom:30px;z-index:4;text-align:right;color:#9ca6c0;font-size:9px;line-height:2;letter-spacing:.1em;pointer-events:none}
+#touch-controls{display:none;position:fixed;inset:0;z-index:8;pointer-events:none}
+#stick-base{position:absolute;left:max(24px,env(safe-area-inset-left));bottom:max(24px,env(safe-area-inset-bottom));width:126px;height:126px;border:1px solid #e6ebff55;border-radius:50%;background:#14192766;backdrop-filter:blur(5px);touch-action:none;pointer-events:auto}
+#stick-base:before{content:"";position:absolute;inset:14px;border:1px dashed #e6ebff30;border-radius:50%}
+#stick-knob{position:absolute;left:50%;top:50%;width:48px;height:48px;transform:translate(-50%,-50%);border-radius:50%;border:1px solid #fff;background:#e8edff66;box-shadow:0 0 22px #dce7ff66;pointer-events:none}
+#open-button{position:absolute;right:max(24px,env(safe-area-inset-right));bottom:max(34px,env(safe-area-inset-bottom));width:82px;height:82px;border:1px solid #fff9;border-radius:50%;background:#dce7ff22;color:#fff;font:700 10px ui-monospace,monospace;letter-spacing:.1em;opacity:0;transform:scale(.92);transition:opacity .2s,transform .2s;pointer-events:none;touch-action:manipulation}
+#open-button.visible{opacity:1;transform:scale(1);pointer-events:auto}
+#boot{position:fixed;inset:0;z-index:10;display:grid;place-items:center;padding:24px;background:radial-gradient(ellipse at 50% 42%,#343a4a 0%,#171b27 58%,#0b0e15 100%);transition:opacity .65s ease}
+#boot.hidden{opacity:0;pointer-events:none}
+.card{width:min(520px,100%);padding:clamp(28px,5vw,54px);border:1px solid #e0e7ff66;background:var(--panel);box-shadow:0 24px 90px #0009;text-align:center}
+.eyebrow{font-size:9px;letter-spacing:.32em;color:#aeb8d2;margin-bottom:22px}
+h1{font-size:clamp(26px,6vw,48px);font-weight:500;letter-spacing:.1em;margin:0 0 17px;color:#fff;text-shadow:0 0 28px #e7eeff88}
+.card p{font-size:11px;line-height:2.1;color:#b7bfd2;margin:0 auto 20px;max-width:390px}
+#begin{display:inline-block;margin-top:10px;padding:13px 18px;border:1px solid #edf1ff99;background:#e8edff;color:#111520;font-size:10px;letter-spacing:.16em}
+#boot .keys{font-size:9px;color:#818ba4;margin-top:20px;margin-bottom:0}
+@media(pointer:coarse),(max-width:720px){
+  #touch-controls{display:block}
+  #controls-note{display:none}
+  #subtitle{top:58px;left:18px;font-size:8px}
+  #hud{padding:18px}
+  #logo,#room-label{font-size:9px}
+  #open-hint{bottom:170px;font-size:9px}
+  #stick-base{width:116px;height:116px}
+  #stick-knob{width:44px;height:44px}
+}
+@media(max-height:500px) and (orientation:landscape){
+  #stick-base{width:96px;height:96px;left:18px;bottom:14px}
+  #stick-knob{width:38px;height:38px}
+  #open-button{width:66px;height:66px;right:20px;bottom:18px}
+}
 </style>
-<script src="mobile-controls.js"></script>
 </head>
 <body>
-<div id="stage"><canvas id="game"></canvas></div>
-<div id="overlay"><div class="top"><div class="brand">NIGHT<br>ARCHIVE / 03</div><div class="stat">SHARDS <b id="count">00 / 05</b><br>HEARTS <b id="hearts">♥ ♥ ♥</b></div></div><div id="crosshair"></div><div id="toast">SHARD RECOVERED</div><div id="hint">WASD / ARROWS — MOVE &nbsp;·&nbsp; SPACE — HOP</div><div id="mobile-hint">MOVE · HOP</div><div id="mobile-controls" aria-label="Touch game controls"><div class="dpad" role="group" aria-label="Movement pad"><button id="touch-up" type="button" data-control="up" aria-label="Move up">▲</button><button id="touch-left" type="button" data-control="left" aria-label="Move left">◀</button><span class="dpad-center" aria-hidden="true"></span><button id="touch-right" type="button" data-control="right" aria-label="Move right">▶</button><button id="touch-down" type="button" data-control="down" aria-label="Move down">▼</button></div><button id="jump-button" type="button" data-control="jump" aria-label="Hop">HOP</button></div></div>
-<div id="start"><div class="card"><div class="kicker">A SMALL, STRANGE NIGHT</div><h1>SHARD//RUN</h1><p>The observatory is dark. Five memory shards are scattered through the ruins.<br>Bring them back. Don't let the watcher catch you.</p><p class="keys">WASD / ARROWS TO MOVE &nbsp; · &nbsp; SPACE TO HOP</p><p class="mobile-keys">LEFT PAD TO MOVE · HOP BUTTON TO JUMP</p><div class="prompt desktop-prompt">PRESS ENTER TO BEGIN</div><div class="prompt mobile-prompt">TAP TO BEGIN</div></div></div>
+<canvas id="game" aria-label="Third-person dungeon game"></canvas>
+<canvas id="flash" aria-hidden="true"></canvas>
+<div id="hud"><div id="logo">THE PALE ROOM<br>AN ENDLESS DESCENT</div><div id="room-label">ROOM 01</div></div>
+<div id="subtitle">FOLLOW THE LIGHT. FIND THE DOOR.</div>
+<div id="open-hint">E — OPEN THE DOOR</div>
+<div id="controls-note">W A S D / ARROWS — MOVE<br>E — OPEN THE DOOR</div>
+<div id="touch-controls">
+  <div id="stick-base" role="application" aria-label="Movement joystick"><div id="stick-knob"></div></div>
+  <button id="open-button" type="button">OPEN</button>
+</div>
+<div id="boot">
+  <div class="card">
+    <div class="eyebrow">A QUIET PLACE BETWEEN PLACES</div>
+    <h1>THE PALE ROOM</h1>
+    <p>A small white figure wanders through a shifting dungeon. Find the door in each room. The light will carry you onward.</p>
+    <div id="begin">ENTER THE DUNGEON</div>
+    <p class="keys">WASD / ARROWS TO MOVE · E TO OPEN<br>TOUCH JOYSTICK ON MOBILE · GAMEPAD SUPPORTED</p>
+  </div>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script>
-(()=>{
-const canvas=document.querySelector('#game'), countEl=document.querySelector('#count'), heartsEl=document.querySelector('#hearts'), toast=document.querySelector('#toast'), start=document.querySelector('#start');
-const scene=new THREE.Scene(); scene.background=new THREE.Color(0x101c27); scene.fog=new THREE.Fog(0x101c27,18,50);
-const camera=new THREE.PerspectiveCamera(55,16/9,.1,100); camera.position.set(0,6,10);
-const renderer=new THREE.WebGLRenderer({canvas,antialias:false,alpha:false}); renderer.setPixelRatio(1); renderer.setSize(426,240,false); renderer.outputEncoding=THREE.sRGBEncoding; renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.BasicShadowMap; renderer.setClearColor(0x101c27);
-scene.add(new THREE.HemisphereLight(0x9cbdd0,0x27332d,1.3)); const moon=new THREE.DirectionalLight(0xffd7a0,2.0); moon.position.set(-7,12,4); moon.castShadow=true; moon.shadow.mapSize.set(512,512); scene.add(moon);
-const mat=(color,rough=.9)=>new THREE.MeshStandardMaterial({color,roughness:rough,flatShading:true});
-const groundMat=mat(0x33433d), stone=mat(0x657064), darkStone=mat(0x3b4b4c), teal=mat(0x397c78), glow= new THREE.MeshStandardMaterial({color:0x9affcb,emissive:0x45dcaa,emissiveIntensity:1.6,flatShading:true}), danger= new THREE.MeshStandardMaterial({color:0xff6477,emissive:0xa51f45,emissiveIntensity:1.2,flatShading:true});
-const floor=new THREE.Mesh(new THREE.PlaneGeometry(48,48,1,1),groundMat);floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
-// restrained tiled path and broken observatory ruins
-const grid=new THREE.GridHelper(48,24,0x718076,0x52645d);grid.position.y=.015;grid.material.transparent=true;grid.material.opacity=.28;scene.add(grid);
-function box(x,y,z,sx,sy,sz,material,rot=0){const m=new THREE.Mesh(new THREE.BoxGeometry(sx,sy,sz),material);m.position.set(x,y,z);m.rotation.y=rot;m.castShadow=true;m.receiveShadow=true;scene.add(m);return m}
-// perimeter monoliths
-for(let i=0;i<18;i++){const side=i%2?1:-1, z=-19+i*2.25; const h=1.1+(i*7%5)*.27;box(side*(13+(i%3)*.35),h/2,z,1,h,1.1,i%3?stone:darkStone,(i%4)*.08)}
-for(let i=0;i<13;i++){const x=-11+i*1.85,h=1.3+(i*3%4)*.35;box(x,h/2,-20,1,h,1.1,i%2?darkStone:stone);box(x,h/2,20,1,h,1.1,i%2?stone:darkStone)}
-// broken pillars and low cover
-const obstacles=[[-6,-6,1.2,2.4,1.2],[5,-8,1.5,2.8,1.3],[-8,3,1.3,1.7,1.2],[7,4,1.1,2.3,1.2],[-1,10,1.5,1.4,1.2],[3,0,2.2,1.1,1.1]];
-obstacles.forEach(([x,z,w,h,d],i)=>{box(x,h/2,z,w,h,d,i%2?darkStone:stone,(i%3)*.2);if(i%2===0)box(x+.1,h+.22,z,w*.78,.28,d*.8,teal,(i%3)*.2)});
-// distant observatory arch / central ruin
-box(0,2.1,-15,9,.55,1.4,darkStone);box(-4.15,1.1,-15,.6,2.2,1.4,stone);box(4.15,1.1,-15,.6,2.2,1.4,stone);box(0,4.2,-15,6,.35,1.2,teal);
-// stylized low-poly pines at the edges
-function tree(x,z,s=1){const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.16*s,.25*s,1.3*s,5),mat(0x55483a));trunk.position.set(x,.65*s,z);trunk.castShadow=true;scene.add(trunk);for(let j=0;j<3;j++){const c=new THREE.Mesh(new THREE.ConeGeometry((1.05-j*.17)*s,(1.5-j*.08)*s,5),mat(j===1?0x395d54:0x29463f));c.position.set(x,(1.3+j*.65)*s,z);c.rotation.y=.3;c.castShadow=true;scene.add(c)}}
-[[-11,-10],[-12,-2],[11,-13],[12,7],[-10,14],[10,16],[-9,-17],[9,-18]].forEach(([x,z],i)=>tree(x,z,.8+(i%3)*.15));
-// player: tiny hooded geometric explorer
-const player=new THREE.Group();scene.add(player);
-const body=new THREE.Mesh(new THREE.BoxGeometry(.62,.78,.48),mat(0x4d8c83));body.position.y=.83;body.castShadow=true;player.add(body);
-const hood=new THREE.Mesh(new THREE.IcosahedronGeometry(.43,0),mat(0xd8c79f));hood.position.set(0,1.48,.02);hood.castShadow=true;player.add(hood);
-const face=new THREE.Mesh(new THREE.BoxGeometry(.35,.17,.12),mat(0x172b33));face.position.set(0,1.46,.37);player.add(face);
-const pack=new THREE.Mesh(new THREE.BoxGeometry(.38,.48,.24),mat(0x9f665b));pack.position.set(0,.86,-.34);player.add(pack);
-const legL=new THREE.Mesh(new THREE.BoxGeometry(.2,.42,.24),mat(0x293c46)),legR=legL.clone();legL.position.set(-.19,.25,0);legR.position.set(.19,.25,0);player.add(legL,legR);
-player.position.set(0,0,13);
-// shards
-const shardSpots=[[-9,-2],[8,-4],[-3,6],[5,12],[0,-11]];const shards=[];
-shardSpots.forEach(([x,z],i)=>{const g=new THREE.Group();const core=new THREE.Mesh(new THREE.OctahedronGeometry(.48,.0),glow);core.castShadow=true;g.add(core);const ring=new THREE.Mesh(new THREE.TorusGeometry(.72,.035,4,8),new THREE.MeshBasicMaterial({color:0x95ffd3}));ring.rotation.x=Math.PI/2;g.add(ring);g.position.set(x,.9,z);scene.add(g);shards.push({g,got:false,phase:i*1.8})});
-// watcher patrol
-const watcher=new THREE.Group();const orb=new THREE.Mesh(new THREE.IcosahedronGeometry(.58,1),danger);orb.position.y=1.2;orb.castShadow=true;watcher.add(orb);const eye=new THREE.Mesh(new THREE.BoxGeometry(.55,.13,.12),mat(0xffd5b0));eye.position.set(0,1.24,.52);watcher.add(eye);const wLight=new THREE.PointLight(0xff3358,1.5,5);wLight.position.y=1.3;watcher.add(wLight);scene.add(watcher);watcher.position.set(0,0,-2);
-// spectral orbiting motes
-const motes=[];for(let i=0;i<28;i++){const m=new THREE.Mesh(new THREE.OctahedronGeometry(.07+(i%3)*.025,0),mat(i%3?0x83c3a9:0xf1c77d));m.position.set((i*17%26)-13,.3+(i*7%12)*.18,(i*13%38)-19);scene.add(m);motes.push(m)}
-const keys={};const touchDevice=MobileControls.isTouchDevice();if(touchDevice)MobileControls.bindTouchControls(document.querySelector('#mobile-controls'),keys);let playing=false,score=0,lives=3,invuln=0,hop=0,last=performance.now(),toastTimer=0,elapsed=0;
-function setToast(text,duration=1.3){toast.textContent=text;toast.style.opacity='1';toastTimer=duration}
-function startGame(){if(playing)return;playing=true;start.style.opacity='0';setTimeout(()=>start.style.display='none',500);last=performance.now()}
-window.addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();keys[e.key.toLowerCase()]=true;if(e.key==='Enter')startGame();if(e.key.toLowerCase()==='r'&&lives<=0)location.reload()});window.addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
-start.addEventListener('pointerdown',startGame);window.addEventListener('pointerdown',()=>{if(touchDevice&&lives<=0)location.reload()});
-function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
-function update(dt){elapsed+=dt;const moving=playing&&(keys.w||keys.arrowup||keys.s||keys.arrowdown||keys.a||keys.arrowleft||keys.d||keys.arrowright);let dx=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0),dz=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0);const len=Math.hypot(dx,dz)||1;dx/=len;dz/=len;
-if(playing&&lives>0){const speed=4.2;player.position.x=clamp(player.position.x+dx*speed*dt,-11,11);player.position.z=clamp(player.position.z+dz*speed*dt,-17,18);if(moving)player.rotation.y=Math.atan2(dx,dz);if(keys[' ']&&hop<=0)hop=.5;if(hop>0){hop-=dt;player.position.y=Math.sin((.5-hop)/.5*Math.PI)*.72}else player.position.y=0;legL.rotation.x=moving?Math.sin(elapsed*13)*.65:0;legR.rotation.x=-legL.rotation.x;
-for(const s of shards){if(s.got)continue;s.g.rotation.y+=dt*1.2;s.g.position.y=.92+Math.sin(elapsed*2.2+s.phase)*.16;if(Math.hypot(player.position.x-s.g.position.x,player.position.z-s.g.position.z)<1.05){s.got=true;scene.remove(s.g);score++;countEl.textContent=String(score).padStart(2,'0')+' / 05';setToast(score===5?'ALL SHARDS FOUND — THE ARCHIVE REMEMBERS':'SHARD RECOVERED');if(score===5)heartsEl.style.color='#8df0ca'}}
-// The watcher tracks loosely, then orbits its patrol anchor
-const tx=player.position.x, tz=player.position.z;const d=Math.hypot(tx-watcher.position.x,tz-watcher.position.z);if(d<8){watcher.position.x+=(tx-watcher.position.x)/Math.max(d,.01)*2.25*dt;watcher.position.z+=(tz-watcher.position.z)/Math.max(d,.01)*2.25*dt}else{watcher.position.x=Math.sin(elapsed*.45)*5.2;watcher.position.z=-1+Math.cos(elapsed*.35)*4.5}watcher.position.x=clamp(watcher.position.x,-10,10);watcher.position.z=clamp(watcher.position.z,-15,15);watcher.rotation.y=Math.atan2(player.position.x-watcher.position.x,player.position.z-watcher.position.z);orb.rotation.y+=dt*.75;orb.rotation.x+=dt*.35;
-if(invuln>0)invuln-=dt;else if(d<1.25){lives--;invuln=1.8;heartsEl.textContent='♥ '.repeat(lives).trim()||'—';player.position.x=clamp(player.position.x+(player.position.x-watcher.position.x)*1.3,-11,11);player.position.z=clamp(player.position.z+(player.position.z-watcher.position.z)*1.3,-17,18);setToast(lives?'THE WATCHER FOUND YOU':(touchDevice?'SIGNAL LOST — TAP TO RESTART':'SIGNAL LOST — PRESS R TO RESTART'),lives===0?3600:1.3);if(lives===0){playing=false;if(touchDevice)document.querySelector('#mobile-hint').textContent='TAP TO RESTART'}}player.visible=invuln<=0||Math.floor(elapsed*12)%2===0}
-for(let i=0;i<motes.length;i++){motes[i].position.y+=Math.sin(elapsed*1.4+i)*dt*.08;motes[i].rotation.y+=dt*.5}
-const target=new THREE.Vector3(player.position.x,player.position.y+1.2,player.position.z);const camPos=new THREE.Vector3(player.position.x+dx*.6,5.2,player.position.z+7.8);camera.position.lerp(camPos,1-Math.exp(-dt*3.4));camera.lookAt(target);
-if(toastTimer>0){toastTimer-=dt;if(toastTimer<=0)toast.style.opacity='0'} }
-function frame(now){requestAnimationFrame(frame);const dt=Math.min((now-last)/1000,.05);last=now;update(dt);renderer.render(scene,camera)}requestAnimationFrame(frame);
-function resize(){const w=Math.min(innerWidth,innerHeight*16/9),h=w*9/16;canvas.style.width=w+'px';canvas.style.height=h+'px'}window.addEventListener('resize',resize);resize();
-})();
-</script>
-</body></html>
+<script src="dungeon.js"></script>
+</body>
+</html>

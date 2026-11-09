@@ -13,10 +13,10 @@ A low-poly, third-person browser dungeon built with Three.js. Guide a small whit
 
 ## Run locally
 
-\`\`\`sh
+```sh
 npm install
 npm run dev
-\`\`\`
+```
 
 Open the local URL printed by Wrangler.
 
@@ -26,21 +26,21 @@ Open the local URL printed by Wrangler.
 
 ## Deploy to Cloudflare Workers
 
-The game is served as static assets from \`public/\` using \`wrangler.jsonc\`.
+The game is served as static assets from `public/` using `wrangler.jsonc`.
 
-\`\`\`sh
+```sh
 npm install
 npx wrangler login
 npm run deploy
-\`\`\`
+```
 
-\`wrangler login\` opens Cloudflare authorization in your browser. Deployment requires a Cloudflare account; this repository does not contain account credentials. For Git-based deploys, connect the repository to Workers Builds in the Cloudflare dashboard and use \`npm run deploy\` as the deploy command.
+`wrangler login` opens Cloudflare authorization in your browser. Deployment requires a Cloudflare account; this repository does not contain account credentials. For Git-based deploys, connect the repository to Workers Builds in the Cloudflare dashboard and use `npm run deploy` as the deploy command.
 
 ## Validation
 
-\`\`\`sh
+```sh
 npm test
 npm run check
-\`\`\`
+```
 
-\`npm test\` runs the repository's Node.js smoke tests. \`npm run check\` runs Wrangler's deploy dry-run without publishing the site.
+`npm test` runs the repository's Node.js smoke tests. `npm run check` runs Wrangler's deploy dry-run without publishing the site.

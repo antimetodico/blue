@@ -278,7 +278,7 @@
     map: characterTexture,
     transparent: true,
     opacity: 0.92,
-    depthTest: true,
+    depthTest: false,
     depthWrite: false,
     blending: THREE.AdditiveBlending
   }));
@@ -506,7 +506,11 @@
     movementActive = false;
     velocity.set(0, 0, 0);
 
-    camera.position.set(spawn.x, spawn.y + 2.8, spawn.z + 5.25);
+    camera.position.set(
+      spawn.x - Math.sin(cameraYaw) * 5.25,
+      spawn.y + 2.8,
+      spawn.z + Math.cos(cameraYaw) * 5.25
+    );
     cameraTarget.copy(spawn).add(new THREE.Vector3(0, 1.16, 0));
     camera.lookAt(cameraTarget);
 
@@ -786,15 +790,10 @@
       localPosition.z = clamp(localPosition.z, -5.72, 5.72);
       localPosition.y = 0;
       if (localPosition.x !== oldX || localPosition.z !== oldZ) {
-        const localVelocity = roomRoot.worldToLocal(player.position.clone().add(velocity)).sub(
-          roomRoot.worldToLocal(player.position.clone())
-        );
+        const localVelocity = velocity.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), -roomAngle);
         if (localPosition.x !== oldX) localVelocity.x = 0;
         if (localPosition.z !== oldZ) localVelocity.z = 0;
-        const origin = roomRoot.worldToLocal(new THREE.Vector3(0, 0, 0));
-        const endpoint = roomRoot.localToWorld(localVelocity.add(origin));
-        const worldOrigin = roomRoot.localToWorld(origin.clone());
-        velocity.copy(endpoint.sub(worldOrigin));
+        velocity.copy(localVelocity.applyAxisAngle(new THREE.Vector3(0, 1, 0), roomAngle));
       }
       player.position.copy(roomRoot.localToWorld(localPosition));
 
